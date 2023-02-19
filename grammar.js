@@ -15,7 +15,7 @@ module.exports = grammar({
     list: $ => seq("(", repeat($._ast), ")"),
     array: $ => seq("[", repeat($._ast), "]"),
     literal: $ => choice($.num_literal, $.bool_literal),
-    num_literal: _ => /[+-]?(?:[0-9]+[.])?[0-9]+/,
+    num_literal: _ => /(?:[0-9]+[.])?[0-9]+/,
     bool_literal: _ => choice("true", "false"),
     keyword: _ => /:[^\s\)\]}]+/,
     symbol: _ => /[a-zA-Z_!\?<>/\.\*-\+\-][^\s{}\(\)\[\](){}]*/,
@@ -100,7 +100,8 @@ module.exports = grammar({
     unary_expression: $ =>
       choice(
         prec.right(8, seq(field("operator", "!"), $.simplexpr)),
-        prec.right(8, seq(field("operator", "-"), $.simplexpr))
+        prec.right(8, seq(field("operator", "-"), $.simplexpr)),
+        prec.right(8, seq(field("operator", "+"), $.simplexpr))
       ),
     binary_expression: $ =>
       choice(

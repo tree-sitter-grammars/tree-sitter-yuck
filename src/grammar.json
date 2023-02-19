@@ -112,7 +112,7 @@
     },
     "num_literal": {
       "type": "PATTERN",
-      "value": "[+-]?(?:[0-9]+[.])?[0-9]+"
+      "value": "(?:[0-9]+[.])?[0-9]+"
     },
     "bool_literal": {
       "type": "CHOICE",
@@ -747,6 +747,27 @@
                 "content": {
                   "type": "STRING",
                   "value": "-"
+                }
+              },
+              {
+                "type": "SYMBOL",
+                "name": "simplexpr"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_RIGHT",
+          "value": 8,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "STRING",
+                  "value": "+"
                 }
               },
               {
