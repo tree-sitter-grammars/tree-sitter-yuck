@@ -104,34 +104,45 @@ module.exports = grammar({
       ),
     binary_expression: $ =>
       choice(
-        prec.left(7, seq($.simplexpr, field("operator", "*"), $.simplexpr)),
-        prec.left(7, seq($.simplexpr, field("operator", "/"), $.simplexpr)),
-        prec.left(7, seq($.simplexpr, field("operator", "%"), $.simplexpr)),
-        prec.left(6, seq($.simplexpr, field("operator", "+"), $.simplexpr)),
-        prec.left(6, seq($.simplexpr, field("operator", "-"), $.simplexpr)),
-        prec.left(5, seq($.simplexpr, field("operator", "=="), $.simplexpr)),
-        prec.left(5, seq($.simplexpr, field("operator", "!="), $.simplexpr)),
-        prec.left(5, seq($.simplexpr, field("operator", ">="), $.simplexpr)),
-        prec.left(5, seq($.simplexpr, field("operator", "<="), $.simplexpr)),
-        prec.left(5, seq($.simplexpr, field("operator", ">"), $.simplexpr)),
-        prec.left(5, seq($.simplexpr, field("operator", "<"), $.simplexpr)),
-        prec.left(5, seq($.simplexpr, field("operator", "=~"), $.simplexpr)),
-        prec.left(4, seq($.simplexpr, field("operator", "&&"), $.simplexpr)),
-        prec.left(4, seq($.simplexpr, field("operator", "||"), $.simplexpr)),
-        prec.left(4, seq($.simplexpr, field("operator", "?:"), $.simplexpr)),
+        binary_expr($, 7, "*"),
+        binary_expr($, 7, "/"),
+        binary_expr($, 7, "%"),
+        binary_expr($, 6, "+"),
+        binary_expr($, 6, "-"),
+        binary_expr($, 5, "=="),
+        binary_expr($, 5, "!="),
+        binary_expr($, 5, ">="),
+        binary_expr($, 5, "<="),
+        binary_expr($, 5, ">"),
+        binary_expr($, 5, "<"),
+        binary_expr($, 5, "=~"),
+        binary_expr($, 4, "&&"),
+        binary_expr($, 4, "||"),
+        binary_expr($, 4, "?:"),
         prec.left(
           3,
           seq(
-            $.simplexpr,
+            field("condition", $.simplexpr),
             field("operator", "?"),
-            $.simplexpr,
+            field("consequence", $.simplexpr),
             field("operator", ":"),
-            $.simplexpr
+            field("alternative", $.simplexpr)
           )
         )
       ),
   },
 });
+
+function binary_expr($, precedence, operator) {
+  return prec.left(
+    precedence,
+    seq(
+      field("left", $.simplexpr),
+      field("operator", operator),
+      field("right", $.simplexpr)
+    )
+  );
+}
 
 function commaSep1(rule) {
   return seq(rule, repeat(seq(",", rule)));
