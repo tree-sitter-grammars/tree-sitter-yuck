@@ -99,8 +99,8 @@ module.exports = grammar({
       ),
     unary_expression: $ =>
       choice(
-        prec.right(8, seq("!", $.simplexpr)),
-        prec.right(8, seq("-", $.simplexpr))
+        prec.right(8, seq(field("operator", "!"), $.simplexpr)),
+        prec.right(8, seq(field("operator", "-"), $.simplexpr))
       ),
     binary_expression: $ =>
       choice(
