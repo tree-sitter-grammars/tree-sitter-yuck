@@ -37,6 +37,9 @@
 (binary_expression
   operator: _ @operator)
 
+(ternary_expression
+  operator: _ @operator)
+
 [
   ":"
   "."
