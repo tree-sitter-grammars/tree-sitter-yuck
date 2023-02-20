@@ -57,7 +57,8 @@ module.exports = grammar({
         $.json_dot_access,
         $.json_safe_dot_access,
         $.unary_expression,
-        $.binary_expression
+        $.binary_expression,
+        $.ternary_expression
       ),
     ident: _ => /[a-zA-Z_][a-zA-Z0-9_-]*/,
     json_array: $ => prec.left(10, seq("[", commaSep($.simplexpr), "]")),
@@ -74,13 +75,18 @@ module.exports = grammar({
     json_access: $ =>
       prec.right(
         9,
-        seq($.ident, field("operator", "["), alias($.simplexpr, $.index), "]")
+        seq(
+          $.simplexpr,
+          field("operator", "["),
+          alias($.simplexpr, $.index),
+          "]"
+        )
       ),
     json_safe_access: $ =>
       prec.right(
         9,
         seq(
-          $.ident,
+          $.simplexpr,
           field("operator", "?."),
           "[",
           alias($.simplexpr, $.index),
@@ -90,12 +96,12 @@ module.exports = grammar({
     json_dot_access: $ =>
       prec.right(
         9,
-        seq($.ident, field("operator", "."), alias($.ident, $.index))
+        seq($.simplexpr, field("operator", "."), alias($.ident, $.index))
       ),
     json_safe_dot_access: $ =>
       prec.right(
         9,
-        seq($.ident, field("operator", "?."), alias($.ident, $.index))
+        seq($.simplexpr, field("operator", "?."), alias($.ident, $.index))
       ),
     unary_expression: $ =>
       choice(
@@ -119,16 +125,17 @@ module.exports = grammar({
         binary_expr($, 5, "=~"),
         binary_expr($, 4, "&&"),
         binary_expr($, 4, "||"),
-        binary_expr($, 4, "?:"),
-        prec.left(
-          3,
-          seq(
-            field("condition", $.simplexpr),
-            field("operator", "?"),
-            field("consequence", $.simplexpr),
-            field("operator", ":"),
-            field("alternative", $.simplexpr)
-          )
+        binary_expr($, 4, "?:")
+      ),
+    ternary_expression: $ =>
+      prec.left(
+        3,
+        seq(
+          field("condition", $.simplexpr),
+          field("operator", "?"),
+          field("consequence", $.simplexpr),
+          field("operator", ":"),
+          field("alternative", $.simplexpr)
         )
       ),
   },

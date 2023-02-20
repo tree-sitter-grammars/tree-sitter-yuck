@@ -42,39 +42,9 @@
     "type": "binary_expression",
     "named": true,
     "fields": {
-      "alternative": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "simplexpr",
-            "named": true
-          }
-        ]
-      },
-      "condition": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "simplexpr",
-            "named": true
-          }
-        ]
-      },
-      "consequence": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "simplexpr",
-            "named": true
-          }
-        ]
-      },
       "left": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "simplexpr",
@@ -83,7 +53,7 @@
         ]
       },
       "operator": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
           {
@@ -115,10 +85,6 @@
             "named": false
           },
           {
-            "type": ":",
-            "named": false
-          },
-          {
             "type": "<",
             "named": false
           },
@@ -143,10 +109,6 @@
             "named": false
           },
           {
-            "type": "?",
-            "named": false
-          },
-          {
             "type": "?:",
             "named": false
           },
@@ -158,7 +120,7 @@
       },
       "right": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "simplexpr",
@@ -279,6 +241,10 @@
           "named": true
         },
         {
+          "type": "ternary_expression",
+          "named": true
+        },
+        {
           "type": "unary_expression",
           "named": true
         }
@@ -305,11 +271,11 @@
       "required": true,
       "types": [
         {
-          "type": "ident",
+          "type": "index",
           "named": true
         },
         {
-          "type": "index",
+          "type": "simplexpr",
           "named": true
         }
       ]
@@ -350,11 +316,11 @@
       "required": true,
       "types": [
         {
-          "type": "ident",
+          "type": "index",
           "named": true
         },
         {
-          "type": "index",
+          "type": "simplexpr",
           "named": true
         }
       ]
@@ -395,11 +361,11 @@
       "required": true,
       "types": [
         {
-          "type": "ident",
+          "type": "index",
           "named": true
         },
         {
-          "type": "index",
+          "type": "simplexpr",
           "named": true
         }
       ]
@@ -425,11 +391,11 @@
       "required": true,
       "types": [
         {
-          "type": "ident",
+          "type": "index",
           "named": true
         },
         {
-          "type": "index",
+          "type": "simplexpr",
           "named": true
         }
       ]
@@ -554,6 +520,10 @@
           "named": true
         },
         {
+          "type": "ternary_expression",
+          "named": true
+        },
+        {
           "type": "unary_expression",
           "named": true
         }
@@ -657,6 +627,56 @@
     "type": "string_interpolation_end",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "ternary_expression",
+    "named": true,
+    "fields": {
+      "alternative": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "simplexpr",
+            "named": true
+          }
+        ]
+      },
+      "condition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "simplexpr",
+            "named": true
+          }
+        ]
+      },
+      "consequence": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "simplexpr",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": ":",
+            "named": false
+          },
+          {
+            "type": "?",
+            "named": false
+          }
+        ]
+      }
+    }
   },
   {
     "type": "unary_expression",

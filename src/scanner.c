@@ -19,10 +19,10 @@ void tree_sitter_yuck_external_scanner_deserialize(void *p, const char *b,
 static void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
 static void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 
-static bool scan_string_literal_fragment(TSLexer *lexer, char quote) {
+static bool scan_string_literal_fragment(TSLexer *lexer, int32_t quote) {
   for (bool has_content = false;; has_content = true) {
     lexer->mark_end(lexer);
-    char next = lexer->lookahead;
+    int32_t next = lexer->lookahead;
     if (next == quote) {
       return has_content;
     } else if (next == '\0') {
