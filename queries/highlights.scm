@@ -2,13 +2,20 @@
 
 (line_comment) @comment
 
-(ident) @variable
+; keywords and symbols
 
-(token) @string
+(keyword) @keyword
+(symbol) @tag
 
+; literals
+
+(bool_literal) @constant.builtin.boolean
+(num_literal) @constant.numeric
+
+; strings
 (string_interpolation
-  "${" @punctuation.special
-  "}" @punctuation.special) @embedded
+  (string_interpolation_start) @punctuation.special
+  (string_interpolation_end) @punctuation.special) @embedded
 
 (escape_sequence) @constant.character.escape
 
@@ -22,6 +29,7 @@
     "`"
   ]) @string
 
+; operators and general punctuation
 
 (unary_expression
   operator: _ @operator)
@@ -31,10 +39,8 @@
 
 [
   ":"
-  ";"
   "."
   ","
-  "="
 ] @punctuation.delimiter
 
 [
@@ -47,8 +53,11 @@
 ] @punctuation.bracket
 [
   ":"
-  ";"
   "."
   ","
-  "="
 ] @punctuation.delimiter
+
+; Rest (general identifiers that are not yet catched)
+
+(index) @variable
+(ident) @variable
