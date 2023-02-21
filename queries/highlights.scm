@@ -1,66 +1,225 @@
-(ERROR) @error
+; Includes
 
-(line_comment) @comment
+((symbol) @include
+  (#match? @include "include"))
 
-; keywords and symbols
+; Keywords
 
-(keyword) @keyword
-(symbol) @tag
+((symbol) @keyword
+  (#match? @keyword "^def"))
 
-; literals
+; Functions
 
-(bool_literal) @constant.builtin.boolean
-(num_literal) @constant.numeric
+(function_call
+  name: (ident) @function.call)
 
-; strings
+; Types
+
+(ast_block
+  (symbol)
+  (ident) @type)
+
+(list
+  (symbol) @type)
+
+; Variables
+
 (string_interpolation
-  (string_interpolation_start) @punctuation.special
-  (string_interpolation_end) @punctuation.special) @embedded
+  (simplexpr
+    ((ident) (#set! priority 105)) @variable))
 
-(escape_sequence) @constant.character.escape
-
-(string
-  [
-    (unescaped_single_quote_string_fragment)
-    (unescaped_double_quote_string_fragment)
-    (unescaped_backtick_string_fragment)
-    "\""
-    "'"
-    "`"
-  ]) @string
-
-; operators and general punctuation
-
-(unary_expression
-  operator: _ @operator)
+(array
+  (symbol) @variable)
 
 (binary_expression
-  operator: _ @operator)
+	(simplexpr
+    (ident) @variable))
+
+(unary_expression
+	(simplexpr
+    (ident) @variable))
 
 (ternary_expression
-  operator: _ @operator)
+	(simplexpr
+		(ident) @variable))
 
-[
+(array
+  (symbol) @variable)
+
+(json_access
+	(simplexpr
+		(ident) @variable))
+
+(json_safe_access
+	(simplexpr
+		(ident) @variable))
+
+(json_array
+	(simplexpr
+    (ident) @variable))
+
+(json_dot_access
+	(simplexpr
+		(ident) @variable))
+
+(json_safe_dot_access
+	(simplexpr
+		(ident) @variable))
+
+(json_object
+  (_)
   ":"
-  "."
-  ","
-] @punctuation.delimiter
+	(simplexpr
+		(ident) @variable))
 
-[
-  "("
-  ")"
+; Properties & Fields
+
+(keyword) @property
+
+(json_access
+  (_)
   "["
-  "]"
-  "{"
-  "}"
-] @punctuation.bracket
+	(simplexpr
+		(ident) @property))
+
+(json_safe_access
+  (_)
+  "?."
+  "["
+	(simplexpr
+		(ident) @property))
+
+(json_dot_access
+  (index) @property)
+
+(json_safe_dot_access
+  (index) @property)
+
+(json_object
+	(simplexpr
+		(ident) @field))
+
+; Operators
+
+[
+  "+"
+  "-"
+  "*"
+  "/"
+  "%"
+	"&&"
+  "||"
+  "=="
+  "!="
+  "=~"
+	">="
+	"<="
+  ">"
+  "<"
+	"?:"
+	"?."
+  "!"
+] @operator
+
+(ternary_expression
+  ["?" ":"] @conditional.ternary)
+
+; Literals
+
+(string) @string
+(escape_sequence) @string.escape
+
+(number) @number
+
+(float) @float
+
+(boolean) @boolean
+
+; Misc
+
+
+; Properties & Fields
+
+(keyword) @property
+
+(json_access
+  (_)
+  "["
+	(simplexpr
+		(ident) @property))
+
+(json_safe_access
+  (_)
+  "?."
+  "["
+	(simplexpr
+		(ident) @property))
+
+(json_dot_access
+  (index) @property)
+
+(json_safe_dot_access
+  (index) @property)
+
+(json_object
+	(simplexpr
+		(ident) @field))
+
+; Operators
+
+[
+  "+"
+  "-"
+  "*"
+  "/"
+  "%"
+  "||"
+  "&&"
+  "=="
+  "!="
+  "=~"
+  ">"
+  "<"
+  ">="
+  "<="
+  "!"
+  "?."
+] @operator
+
+(ternary_expression
+  ["?" ":"] @conditional.ternary)
+
+; Literals
+
+(string) @string
+(escape_sequence) @string.escape
+
+(number) @number
+
+(float) @float
+
+(boolean) @boolean
+
+; Misc
+
 [
   ":"
   "."
   ","
 ] @punctuation.delimiter
 
-; Rest (general identifiers that are not yet catched)
+["{" "}"] @punctuation.bracket
 
-(index) @variable
-(ident) @variable
+["[" "]"] @punctuation.bracket
+
+; Comments
+
+(comment) @comment @spell
+
+; Interpolations
+
+(string_interpolation
+	"${" @punctuation.special
+  (simplexpr
+	  (ident) @variable)
+	"}" @punctuation.special) @embedded @none
