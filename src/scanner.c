@@ -8,15 +8,21 @@ enum TokenType {
 };
 
 void *tree_sitter_yuck_external_scanner_create() { return NULL; }
-void tree_sitter_yuck_external_scanner_destroy(void *p) {}
-void tree_sitter_yuck_external_scanner_reset(void *p) {}
-unsigned tree_sitter_yuck_external_scanner_serialize(void *p, char *buffer) {
+
+void tree_sitter_yuck_external_scanner_destroy(void *payload) {}
+
+void tree_sitter_yuck_external_scanner_reset(void *payload) {}
+
+unsigned tree_sitter_yuck_external_scanner_serialize(void *payload,
+                                                     char *buffer) {
   return 0;
 }
-void tree_sitter_yuck_external_scanner_deserialize(void *p, const char *b,
-                                                   unsigned n) {}
+void tree_sitter_yuck_external_scanner_deserialize(void *payload,
+                                                   const char *buffer,
+                                                   unsigned length) {}
 
 static void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
+
 static void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 
 static bool scan_string_literal_fragment(TSLexer *lexer, int32_t quote) {
@@ -45,10 +51,14 @@ bool tree_sitter_yuck_external_scanner_scan(void *payload, TSLexer *lexer,
   if (valid_symbols[UNESCAPED_DOUBLE_QUOTE_STRING_FRAGMENT]) {
     lexer->result_symbol = UNESCAPED_DOUBLE_QUOTE_STRING_FRAGMENT;
     return scan_string_literal_fragment(lexer, '"');
-  } else if (valid_symbols[UNESCAPED_SINGLE_QUOTE_STRING_FRAGMENT]) {
+  }
+
+  if (valid_symbols[UNESCAPED_SINGLE_QUOTE_STRING_FRAGMENT]) {
     lexer->result_symbol = UNESCAPED_SINGLE_QUOTE_STRING_FRAGMENT;
     return scan_string_literal_fragment(lexer, '\'');
-  } else if (valid_symbols[UNESCAPED_BACKTICK_STRING_FRAGMENT]) {
+  }
+
+  if (valid_symbols[UNESCAPED_BACKTICK_STRING_FRAGMENT]) {
     lexer->result_symbol = UNESCAPED_BACKTICK_STRING_FRAGMENT;
     return scan_string_literal_fragment(lexer, '`');
   }
