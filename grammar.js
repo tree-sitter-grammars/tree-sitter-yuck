@@ -1,169 +1,251 @@
+/**
+ * @file Yuck grammar for tree-sitter
+ * @author Philipp Mildenberger <philipp@mildenberger.me>
+ * @author Amaan Qureshi <amaanq12@gmail.com>
+ * @license MIT
+ * @see {@link https://github.com/elkowar/eww/blob/master/docs/src/configuration.md#creating-your-first-window|official syntax spec}
+ * @see {@link https://github.com/elkowar/eww| official source}
+ */
+
+// deno-lint-ignore-file ban-ts-comment
+/* eslint-disable arrow-parens */
+/* eslint-disable camelcase */
+/* eslint-disable-next-line spaced-comment */
+/// <reference types="tree-sitter-cli/dsl" />
+// @ts-check
+
+const PREC = {
+  ternary: 0,
+  or: 1,
+  and: 2,
+  elvis: 2,
+  equality: 6,
+  relation: 7,
+  add: 8,
+  times: 9,
+  unary: 10,
+  json_access: 11,
+  json: 12,
+};
+
 module.exports = grammar({
-  name: "yuck",
-  extras: $ => [/\s/, $.line_comment],
+  name: 'yuck',
+
   externals: $ => [
-    $.unescaped_single_quote_string_fragment,
-    $.unescaped_double_quote_string_fragment,
-    $.unescaped_backtick_string_fragment,
+    $._single_string_fragment,
+    $._double_string_fragment,
+    $._backtick_string_fragment,
   ],
 
+  extras: $ => [
+    $.comment,
+    /\s/,
+  ],
+
+  supertypes: $ => [
+    $.ast_block,
+    $.literal,
+  ],
+
+  word: $ => $.symbol,
+
   rules: {
-    source_file: $ => repeat($._ast),
-    _ast: $ =>
-      choice($.list, $.array, $.keyword, $.symbol, $.literal, $.string, $.expr),
-    line_comment: _ => token(seq(";", /.*/)),
-    list: $ => seq("(", repeat($._ast), ")"),
-    array: $ => seq("[", repeat($._ast), "]"),
-    literal: $ => choice($.num_literal, $.bool_literal),
-    num_literal: _ => /(?:[0-9]+[.])?[0-9]+/,
-    bool_literal: _ => choice("true", "false"),
-    keyword: _ => /:[^\s\)\]}]+/,
-    symbol: _ => /[a-zA-Z_!\?<>/\.\*-\+\-][^\s{}\(\)\[\](){}]*/,
-    string: $ =>
-      choice(
-        string($, $.unescaped_single_quote_string_fragment, "'"),
-        string($, $.unescaped_double_quote_string_fragment, '"'),
-        string($, $.unescaped_backtick_string_fragment, "`")
-      ),
-    expr: $ => seq("{", $.simplexpr, "}"),
+    source_file: $ => repeat($.ast_block),
 
-    // I think lookahead regexes are unfortunately not supported in tree-sitter, thus use an external scanner instead
-    // unescaped_string_fragment: _ => repeat(/[^\"\\]+(?:(?=\${)||(?=\\))/),
-    // I think right now every single character is allowed as escape sequence
-    escape_sequence: _ => token.immediate(seq("\\", /./)),
-    string_interpolation_start: _ => "${",
-    string_interpolation_end: _ => "}",
-    string_interpolation: $ =>
-      seq(
-        $.string_interpolation_start,
-        $.simplexpr,
-        $.string_interpolation_end
-      ),
+    ast_block: $ => choice(
+      $.list,
+      $.array,
+      $.keyword,
+      $.symbol,
+      $.literal,
+      $.string,
+      $.expr,
+    ),
 
-    // Simple expression parser
-    // TODO prec necessary for atoms?
     simplexpr: $ =>
       choice(
-        prec.left(10, $.bool_literal),
-        prec.left(10, $.num_literal),
-        prec.left(10, $.string),
-        prec.left(10, $.ident),
-        prec.left(10, seq("(", $.simplexpr, ")")),
+        $.literal,
+        $.string,
+        $.ident,
         $.json_array,
         $.json_object,
-        $.function_call,
         $.json_access,
         $.json_safe_access,
         $.json_dot_access,
         $.json_safe_dot_access,
+        $.function_call,
         $.unary_expression,
         $.binary_expression,
-        $.ternary_expression
+        $.ternary_expression,
+        $.parenthesized_expression,
       ),
+
+    expr: $ => seq('{', $.simplexpr, '}'),
+
+    json_array: $ => prec.left(PREC.json,
+      seq('[', commaSep($.simplexpr), ']'),
+    ),
+
+    json_object: $ => prec.left(PREC.json,
+      seq('{', commaSep(seq($.simplexpr, ':', $.simplexpr)), '}'),
+    ),
+
+    json_access: $ => prec.right(PREC.json_access,
+      seq($.simplexpr, '[', $.simplexpr, ']'),
+    ),
+    json_safe_access: $ => prec.right(PREC.json_access,
+      seq($.simplexpr, '?.', '[', $.simplexpr, ']'),
+    ),
+    json_dot_access: $ => prec.right(PREC.json_access,
+      seq($.simplexpr, '.', alias($.ident, $.index)),
+    ),
+    json_safe_dot_access: $ => prec.right(PREC.json_access,
+      seq($.simplexpr, '?.', alias($.ident, $.index)),
+    ),
+
+    function_call: $ => seq(
+      field('name', $.ident),
+      '(',
+      commaSep($.simplexpr),
+      ')',
+    ),
+
+    list: $ => seq('(', repeat($.ast_block), ')'),
+    array: $ => seq('[', repeat($.ast_block), ']'),
+
+    binary_expression: $ => {
+      const table = [
+        ['+', PREC.add],
+        ['-', PREC.add],
+        ['*', PREC.times],
+        ['/', PREC.times],
+        ['%', PREC.times],
+        ['&&', PREC.and],
+        ['||', PREC.or],
+        ['==', PREC.equality],
+        ['!=', PREC.equality],
+        ['=~', PREC.equality],
+        ['>=', PREC.relation],
+        ['<=', PREC.relation],
+        ['>', PREC.relation],
+        ['<', PREC.relation],
+        ['?:', PREC.elvis],
+      ];
+
+      return choice(...table.map(([operator, precedence]) => {
+        return prec.left(precedence, seq(
+          field('left', $.simplexpr),
+          // @ts-ignore
+          field('operator', operator),
+          field('right', $.simplexpr),
+        ));
+      }));
+    },
+
+    unary_expression: $ => prec(PREC.unary, seq(
+      field('operator', choice('+', '-', '!')),
+      field('argument', $.simplexpr),
+    )),
+
+    ternary_expression: $ => prec.right(PREC.ternary, seq(
+      field('condition', $.simplexpr),
+      '?',
+      field('consequence', $.simplexpr),
+      ':',
+      field('alternative', $.simplexpr),
+    )),
+
+    parenthesized_expression: $ => seq('(', $.simplexpr, ')'),
+
+    literal: $ => choice($.number, $.boolean),
+
+    number: $ => choice($.integer, $.float),
+
+    integer: _ => /\d+/,
+
+    float: _ => /\d+(\.(\d+)?)?|\.\d+/,
+
+    boolean: _ => choice('true', 'false'),
+
+    // Here we tolerate unescaped newlines in double-quoted and
+    // single-quoted string literals.
+    //
+    string: $ => choice(
+      seq(
+        '"',
+        repeat(choice(
+          $.string_interpolation,
+          $._escape_sequence,
+          alias($._double_string_fragment, $.string_fragment),
+        )),
+        '"',
+      ),
+      seq(
+        '\'',
+        repeat(choice(
+          $.string_interpolation,
+          $._escape_sequence,
+          alias($._single_string_fragment, $.string_fragment),
+        )),
+        '\'',
+      ),
+      seq(
+        '`',
+        repeat(choice(
+          $.string_interpolation,
+          $._escape_sequence,
+          alias($._backtick_string_fragment, $.string_fragment),
+        )),
+        '`',
+      ),
+    ),
+
+    string_interpolation: $ => seq('${', $.simplexpr, '}'),
+
+    _escape_sequence: $ =>
+      choice(
+        prec(2, token.immediate(seq('\\', /[^abfnrtvxu'\"\\\?]/))),
+        prec(1, $.escape_sequence),
+      ),
+    escape_sequence: _ => token.immediate(seq(
+      '\\',
+      choice(
+        /[^xu0-7]/,
+        /[0-7]{1,3}/,
+        /x[0-9a-fA-F]{2}/,
+        /u[0-9a-fA-F]{4}/,
+        /u{[0-9a-fA-F]+}/,
+      ),
+    )),
+
     ident: _ => /[a-zA-Z_][a-zA-Z0-9_-]*/,
-    json_array: $ => prec.left(10, seq("[", commaSep($.simplexpr), "]")),
-    json_object: $ =>
-      prec.left(
-        10,
-        seq("{", commaSep(seq($.simplexpr, ":", $.simplexpr)), "}")
-      ),
-    function_call: $ =>
-      prec.right(
-        9,
-        seq($.ident, field("operator", "("), commaSep($.simplexpr), ")")
-      ),
-    json_access: $ =>
-      prec.right(
-        9,
-        seq(
-          $.simplexpr,
-          field("operator", "["),
-          alias($.simplexpr, $.index),
-          "]"
-        )
-      ),
-    json_safe_access: $ =>
-      prec.right(
-        9,
-        seq(
-          $.simplexpr,
-          field("operator", "?."),
-          "[",
-          alias($.simplexpr, $.index),
-          "]"
-        )
-      ),
-    json_dot_access: $ =>
-      prec.right(
-        9,
-        seq($.simplexpr, field("operator", "."), alias($.ident, $.index))
-      ),
-    json_safe_dot_access: $ =>
-      prec.right(
-        9,
-        seq($.simplexpr, field("operator", "?."), alias($.ident, $.index))
-      ),
-    unary_expression: $ =>
-      choice(
-        prec.right(8, seq(field("operator", "!"), $.simplexpr)),
-        prec.right(8, seq(field("operator", "-"), $.simplexpr)),
-        prec.right(8, seq(field("operator", "+"), $.simplexpr))
-      ),
-    binary_expression: $ =>
-      choice(
-        binary_expr($, 7, "*"),
-        binary_expr($, 7, "/"),
-        binary_expr($, 7, "%"),
-        binary_expr($, 6, "+"),
-        binary_expr($, 6, "-"),
-        binary_expr($, 5, "=="),
-        binary_expr($, 5, "!="),
-        binary_expr($, 5, ">="),
-        binary_expr($, 5, "<="),
-        binary_expr($, 5, ">"),
-        binary_expr($, 5, "<"),
-        binary_expr($, 5, "=~"),
-        binary_expr($, 4, "&&"),
-        binary_expr($, 4, "||"),
-        binary_expr($, 4, "?:")
-      ),
-    ternary_expression: $ =>
-      prec.left(
-        3,
-        seq(
-          field("condition", $.simplexpr),
-          field("operator", "?"),
-          field("consequence", $.simplexpr),
-          field("operator", ":"),
-          field("alternative", $.simplexpr)
-        )
-      ),
+    keyword: _ => /:[^\s\)\]}]+/,
+    symbol: _ => /[a-zA-Z_!\?<>/\.\*-\+\-][^\s{}\(\)\[\](){}]*/,
+
+    comment: _ => token(seq(';', /.*/)),
   },
 });
 
-function binary_expr($, precedence, operator) {
-  return prec.left(
-    precedence,
-    seq(
-      field("left", $.simplexpr),
-      field("operator", operator),
-      field("right", $.simplexpr)
-    )
-  );
-}
-
-function commaSep1(rule) {
-  return seq(rule, repeat(seq(",", rule)));
-}
-
+/**
+ * Creates a rule to optionally match one or more of the rules separated by a comma
+ *
+ * @param {Rule} rule
+ *
+ * @return {ChoiceRule}
+ *
+ */
 function commaSep(rule) {
   return optional(commaSep1(rule));
 }
 
-function string($, literalRule, quote) {
-  return seq(
-    quote,
-    repeat(choice(literalRule, $.string_interpolation, $.escape_sequence)),
-    quote
-  );
+/**
+ * Creates a rule to match one or more of the rules separated by a comma
+ *
+ * @param {Rule} rule
+ *
+ * @return {SeqRule}
+ *
+ */
+function commaSep1(rule) {
+  return seq(rule, repeat(seq(',', rule)));
 }
