@@ -438,15 +438,11 @@
       "required": false,
       "types": [
         {
-          "type": "escape_sequence",
-          "named": true
-        },
-        {
-          "type": "string_fragment",
-          "named": true
-        },
-        {
           "type": "string_interpolation",
+          "named": true
+        },
+        {
+          "type": "string_lit_fragment",
           "named": true
         }
       ]
@@ -462,6 +458,21 @@
       "types": [
         {
           "type": "simplexpr",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "string_lit_fragment",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "escape_sequence",
           "named": true
         }
       ]
@@ -679,10 +690,6 @@
   },
   {
     "type": "keyword",
-    "named": true
-  },
-  {
-    "type": "string_fragment",
     "named": true
   },
   {
