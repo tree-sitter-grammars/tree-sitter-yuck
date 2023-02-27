@@ -39,30 +39,17 @@ module.exports = grammar({
 
   conflicts: $ => [[$.string]],
 
-  extras: $ => [
-    $.comment,
-    /\s/,
-  ],
+  extras: $ => [$.comment, /\s/],
 
-  supertypes: $ => [
-    $.ast_block,
-    $.literal,
-  ],
+  supertypes: $ => [$.ast_block, $.literal],
 
   word: $ => $.symbol,
 
   rules: {
     source_file: $ => repeat($.ast_block),
 
-    ast_block: $ => choice(
-      $.list,
-      $.array,
-      $.keyword,
-      $.symbol,
-      $.literal,
-      $.string,
-      $.expr,
-    ),
+    ast_block: $ =>
+      choice($.list, $.array, $.keyword, $.symbol, $.literal, $.string, $.expr),
 
     simplexpr: $ =>
       choice(
@@ -79,38 +66,39 @@ module.exports = grammar({
         $.unary_expression,
         $.binary_expression,
         $.ternary_expression,
-        $.parenthesized_expression,
+        $.parenthesized_expression
       ),
 
     expr: $ => seq('{', $.simplexpr, '}'),
 
-    json_array: $ => prec.left(PREC.json,
-      seq('[', commaSep($.simplexpr), ']'),
-    ),
+    json_array: $ => prec.left(PREC.json, seq('[', commaSep($.simplexpr), ']')),
 
-    json_object: $ => prec.left(PREC.json,
-      seq('{', commaSep(seq($.simplexpr, ':', $.simplexpr)), '}'),
-    ),
+    json_object: $ =>
+      prec.left(
+        PREC.json,
+        seq('{', commaSep(seq($.simplexpr, ':', $.simplexpr)), '}')
+      ),
 
-    json_access: $ => prec.right(PREC.json_access,
-      seq($.simplexpr, '[', $.simplexpr, ']'),
-    ),
-    json_safe_access: $ => prec.right(PREC.json_access,
-      seq($.simplexpr, '?.', '[', $.simplexpr, ']'),
-    ),
-    json_dot_access: $ => prec.right(PREC.json_access,
-      seq($.simplexpr, '.', alias($.ident, $.index)),
-    ),
-    json_safe_dot_access: $ => prec.right(PREC.json_access,
-      seq($.simplexpr, '?.', alias($.ident, $.index)),
-    ),
+    json_access: $ =>
+      prec.right(PREC.json_access, seq($.simplexpr, '[', $.simplexpr, ']')),
+    json_safe_access: $ =>
+      prec.right(
+        PREC.json_access,
+        seq($.simplexpr, '?.', '[', $.simplexpr, ']')
+      ),
+    json_dot_access: $ =>
+      prec.right(
+        PREC.json_access,
+        seq($.simplexpr, '.', alias($.ident, $.index))
+      ),
+    json_safe_dot_access: $ =>
+      prec.right(
+        PREC.json_access,
+        seq($.simplexpr, '?.', alias($.ident, $.index))
+      ),
 
-    function_call: $ => seq(
-      field('name', $.ident),
-      '(',
-      commaSep($.simplexpr),
-      ')',
-    ),
+    function_call: $ =>
+      seq(field('name', $.ident), '(', commaSep($.simplexpr), ')'),
 
     list: $ => seq('(', repeat($.ast_block), ')'),
     array: $ => seq('[', repeat($.ast_block), ']'),
@@ -134,28 +122,41 @@ module.exports = grammar({
         ['?:', PREC.elvis],
       ];
 
-      return choice(...table.map(([operator, precedence]) => {
-        return prec.left(precedence, seq(
-          field('left', $.simplexpr),
-          // @ts-ignore
-          field('operator', operator),
-          field('right', $.simplexpr),
-        ));
-      }));
+      return choice(
+        ...table.map(([operator, precedence]) => {
+          return prec.left(
+            precedence,
+            seq(
+              field('left', $.simplexpr),
+              // @ts-ignore
+              field('operator', operator),
+              field('right', $.simplexpr)
+            )
+          );
+        })
+      );
     },
 
-    unary_expression: $ => prec(PREC.unary, seq(
-      field('operator', choice('+', '-', '!')),
-      field('argument', $.simplexpr),
-    )),
+    unary_expression: $ =>
+      prec(
+        PREC.unary,
+        seq(
+          field('operator', choice('+', '-', '!')),
+          field('argument', $.simplexpr)
+        )
+      ),
 
-    ternary_expression: $ => prec.right(PREC.ternary, seq(
-      field('condition', $.simplexpr),
-      '?',
-      field('consequence', $.simplexpr),
-      ':',
-      field('alternative', $.simplexpr),
-    )),
+    ternary_expression: $ =>
+      prec.right(
+        PREC.ternary,
+        seq(
+          field('condition', $.simplexpr),
+          '?',
+          field('consequence', $.simplexpr),
+          ':',
+          field('alternative', $.simplexpr)
+        )
+      ),
 
     parenthesized_expression: $ => seq('(', $.simplexpr, ')'),
 
@@ -180,7 +181,7 @@ module.exports = grammar({
       return choice(
         str($._unescaped_double_quote_string_fragment, '"'),
         str($._unescaped_single_quote_string_fragment, "'"),
-        str($._unescaped_backtick_string_fragment, "`")
+        str($._unescaped_backtick_string_fragment, '`')
       );
     },
 
@@ -189,18 +190,21 @@ module.exports = grammar({
     _escape_sequence: $ =>
       choice(
         prec(2, token.immediate(seq('\\', /[^abfnrtvxu'\"\\\?]/))),
-        prec(1, $.escape_sequence),
+        prec(1, $.escape_sequence)
       ),
-    escape_sequence: _ => token.immediate(seq(
-      '\\',
-      choice(
-        /[^xu0-7]/,
-        /[0-7]{1,3}/,
-        /x[0-9a-fA-F]{2}/,
-        /u[0-9a-fA-F]{4}/,
-        /u{[0-9a-fA-F]+}/,
+    escape_sequence: _ =>
+      token.immediate(
+        seq(
+          '\\',
+          choice(
+            /[^xu0-7]/,
+            /[0-7]{1,3}/,
+            /x[0-9a-fA-F]{2}/,
+            /u[0-9a-fA-F]{4}/,
+            /u{[0-9a-fA-F]+}/
+          )
+        )
       ),
-    )),
 
     ident: _ => /[a-zA-Z_][a-zA-Z0-9_-]*/,
     keyword: _ => /:[^\s\)\]}]+/,

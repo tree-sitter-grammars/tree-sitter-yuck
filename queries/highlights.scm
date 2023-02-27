@@ -126,8 +126,8 @@
 
 ; Literals
 
-(string) @string
 (escape_sequence) @string.escape
+(string) @string
 
 (number) @number
 

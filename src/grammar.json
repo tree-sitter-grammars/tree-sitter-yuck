@@ -1074,7 +1074,7 @@
     },
     "float": {
       "type": "PATTERN",
-      "value": "\\d+(\\.(\\d+)?)?|\\.\\d+"
+      "value": "\\d+\\.\\d+"
     },
     "boolean": {
       "type": "CHOICE",
@@ -1109,17 +1109,25 @@
                     "name": "string_interpolation"
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "_escape_sequence"
-                  },
-                  {
                     "type": "ALIAS",
                     "content": {
-                      "type": "SYMBOL",
-                      "name": "_double_string_fragment"
+                      "type": "REPEAT1",
+                      "content": {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "_unescaped_double_quote_string_fragment"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "_escape_sequence"
+                          }
+                        ]
+                      }
                     },
                     "named": true,
-                    "value": "string_fragment"
+                    "value": "string_lit_fragment"
                   }
                 ]
               }
@@ -1147,17 +1155,25 @@
                     "name": "string_interpolation"
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "_escape_sequence"
-                  },
-                  {
                     "type": "ALIAS",
                     "content": {
-                      "type": "SYMBOL",
-                      "name": "_single_string_fragment"
+                      "type": "REPEAT1",
+                      "content": {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "_unescaped_single_quote_string_fragment"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "_escape_sequence"
+                          }
+                        ]
+                      }
                     },
                     "named": true,
-                    "value": "string_fragment"
+                    "value": "string_lit_fragment"
                   }
                 ]
               }
@@ -1185,17 +1201,25 @@
                     "name": "string_interpolation"
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "_escape_sequence"
-                  },
-                  {
                     "type": "ALIAS",
                     "content": {
-                      "type": "SYMBOL",
-                      "name": "_backtick_string_fragment"
+                      "type": "REPEAT1",
+                      "content": {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "_unescaped_backtick_string_fragment"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "_escape_sequence"
+                          }
+                        ]
+                      }
                     },
                     "named": true,
-                    "value": "string_fragment"
+                    "value": "string_lit_fragment"
                   }
                 ]
               }
@@ -1334,20 +1358,24 @@
       "value": "\\s"
     }
   ],
-  "conflicts": [],
+  "conflicts": [
+    [
+      "string"
+    ]
+  ],
   "precedences": [],
   "externals": [
     {
       "type": "SYMBOL",
-      "name": "_single_string_fragment"
+      "name": "_unescaped_single_quote_string_fragment"
     },
     {
       "type": "SYMBOL",
-      "name": "_double_string_fragment"
+      "name": "_unescaped_double_quote_string_fragment"
     },
     {
       "type": "SYMBOL",
-      "name": "_backtick_string_fragment"
+      "name": "_unescaped_backtick_string_fragment"
     }
   ],
   "inline": [],
