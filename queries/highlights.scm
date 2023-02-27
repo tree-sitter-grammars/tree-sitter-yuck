@@ -191,7 +191,7 @@
 
 (string_interpolation
   "${" @punctuation.special
-  "}" @punctuation.special) @embedded
+  "}" @punctuation.special)
 
 (escape_sequence) @string.escape
 
