@@ -165,7 +165,7 @@ module.exports = grammar({
 
     integer: _ => /\d+/,
 
-    float: _ => /\d+(\.(\d+)?)?|\.\d+/,
+    float: _ => /\d+\.\d+/,
 
     boolean: _ => choice('true', 'false'),
 
