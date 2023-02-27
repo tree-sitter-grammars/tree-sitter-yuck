@@ -51,6 +51,55 @@ module.exports = grammar({
     ast_block: $ =>
       choice($.list, $.array, $.keyword, $.symbol, $.literal, $.string, $.expr),
 
+    list: $ => seq('(', repeat($.ast_block), ')'),
+    array: $ => seq('[', repeat($.ast_block), ']'),
+    keyword: _ => /:[^\s\)\]}]+/,
+    symbol: _ => /[a-zA-Z_!\?<>/\.\*-\+\-][^\s{}\(\)\[\](){}]*/,
+
+    literal: $ => choice($.number, $.boolean),
+    number: $ => choice($.integer, $.float),
+    integer: _ => /\d+/,
+    float: _ => /\d+\.\d+/,
+    boolean: _ => choice('true', 'false'),
+
+    // Here we tolerate unescaped newlines in double-quoted and
+    // single-quoted string literals.
+    string: $ => {
+      const str = (fragment, q) => {
+        const frag = repeat1(choice(fragment, $._escape_sequence));
+        const strLit = alias(frag, $.string_lit_fragment);
+        return seq(q, repeat(choice($.string_interpolation, strLit)), q);
+      };
+      return choice(
+        str($._unescaped_double_quote_string_fragment, '"'),
+        str($._unescaped_single_quote_string_fragment, "'"),
+        str($._unescaped_backtick_string_fragment, '`')
+      );
+    },
+
+    string_interpolation: $ => seq('${', $.simplexpr, '}'),
+
+    _escape_sequence: $ =>
+      choice(
+        prec(2, token.immediate(seq('\\', /[^abfnrtvxu'\"\\\?]/))),
+        prec(1, $.escape_sequence)
+      ),
+    escape_sequence: _ =>
+      token.immediate(
+        seq(
+          '\\',
+          choice(
+            /[^xu0-7]/,
+            /[0-7]{1,3}/,
+            /x[0-9a-fA-F]{2}/,
+            /u[0-9a-fA-F]{4}/,
+            /u{[0-9a-fA-F]+}/
+          )
+        )
+      ),
+
+    expr: $ => seq('{', $.simplexpr, '}'),
+
     simplexpr: $ =>
       choice(
         $.literal,
@@ -68,8 +117,6 @@ module.exports = grammar({
         $.ternary_expression,
         $.parenthesized_expression
       ),
-
-    expr: $ => seq('{', $.simplexpr, '}'),
 
     json_array: $ => prec.left(PREC.json, seq('[', commaSep($.simplexpr), ']')),
 
@@ -99,9 +146,6 @@ module.exports = grammar({
 
     function_call: $ =>
       seq(field('name', $.ident), '(', commaSep($.simplexpr), ')'),
-
-    list: $ => seq('(', repeat($.ast_block), ')'),
-    array: $ => seq('[', repeat($.ast_block), ']'),
 
     binary_expression: $ => {
       const table = [
@@ -160,55 +204,7 @@ module.exports = grammar({
 
     parenthesized_expression: $ => seq('(', $.simplexpr, ')'),
 
-    literal: $ => choice($.number, $.boolean),
-
-    number: $ => choice($.integer, $.float),
-
-    integer: _ => /\d+/,
-
-    float: _ => /\d+\.\d+/,
-
-    boolean: _ => choice('true', 'false'),
-
-    // Here we tolerate unescaped newlines in double-quoted and
-    // single-quoted string literals.
-    string: $ => {
-      const str = (fragment, q) => {
-        const frag = repeat1(choice(fragment, $._escape_sequence));
-        const strLit = alias(frag, $.string_lit_fragment);
-        return seq(q, repeat(choice($.string_interpolation, strLit)), q);
-      };
-      return choice(
-        str($._unescaped_double_quote_string_fragment, '"'),
-        str($._unescaped_single_quote_string_fragment, "'"),
-        str($._unescaped_backtick_string_fragment, '`')
-      );
-    },
-
-    string_interpolation: $ => seq('${', $.simplexpr, '}'),
-
-    _escape_sequence: $ =>
-      choice(
-        prec(2, token.immediate(seq('\\', /[^abfnrtvxu'\"\\\?]/))),
-        prec(1, $.escape_sequence)
-      ),
-    escape_sequence: _ =>
-      token.immediate(
-        seq(
-          '\\',
-          choice(
-            /[^xu0-7]/,
-            /[0-7]{1,3}/,
-            /x[0-9a-fA-F]{2}/,
-            /u[0-9a-fA-F]{4}/,
-            /u{[0-9a-fA-F]+}/
-          )
-        )
-      ),
-
     ident: _ => /[a-zA-Z_][a-zA-Z0-9_-]*/,
-    keyword: _ => /:[^\s\)\]}]+/,
-    symbol: _ => /[a-zA-Z_!\?<>/\.\*-\+\-][^\s{}\(\)\[\](){}]*/,
 
     comment: _ => token(seq(';', /.*/)),
   },
