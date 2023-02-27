@@ -1,8 +1,3 @@
-; Includes
-
-((symbol) @include
-  (#match? @include "include"))
-
 ; Types
 
 (ast_block
@@ -11,6 +6,11 @@
 
 (list
   (symbol) @type)
+
+; Includes
+
+((symbol) @include
+  (#match? @include "include"))
 
 ; Keywords
 
