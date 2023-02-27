@@ -24,10 +24,6 @@
 
 ; Variables
 
-(string_interpolation
-  (simplexpr
-    ((ident) (#set! priority 105)) @variable))
-
 (array
   (symbol) @variable)
 
@@ -123,20 +119,6 @@
 
 (ternary_expression
   ["?" ":"] @conditional.ternary)
-
-; Literals
-
-(escape_sequence) @string.escape
-(string) @string
-
-(number) @number
-
-(float) @float
-
-(boolean) @boolean
-
-; Misc
-
 
 ; Properties & Fields
 
