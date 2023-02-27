@@ -32,10 +32,12 @@ module.exports = grammar({
   name: 'yuck',
 
   externals: $ => [
-    $._single_string_fragment,
-    $._double_string_fragment,
-    $._backtick_string_fragment,
+    $._unescaped_single_quote_string_fragment,
+    $._unescaped_double_quote_string_fragment,
+    $._unescaped_backtick_string_fragment,
   ],
+
+  conflicts: $ => [[$.string]],
 
   extras: $ => [
     $.comment,
@@ -169,36 +171,18 @@ module.exports = grammar({
 
     // Here we tolerate unescaped newlines in double-quoted and
     // single-quoted string literals.
-    //
-    string: $ => choice(
-      seq(
-        '"',
-        repeat(choice(
-          $.string_interpolation,
-          $._escape_sequence,
-          alias($._double_string_fragment, $.string_fragment),
-        )),
-        '"',
-      ),
-      seq(
-        '\'',
-        repeat(choice(
-          $.string_interpolation,
-          $._escape_sequence,
-          alias($._single_string_fragment, $.string_fragment),
-        )),
-        '\'',
-      ),
-      seq(
-        '`',
-        repeat(choice(
-          $.string_interpolation,
-          $._escape_sequence,
-          alias($._backtick_string_fragment, $.string_fragment),
-        )),
-        '`',
-      ),
-    ),
+    string: $ => {
+      const str = (fragment, q) => {
+        const frag = repeat1(choice(fragment, $._escape_sequence));
+        const strLit = alias(frag, $.string_lit_fragment);
+        return seq(q, repeat(choice($.string_interpolation, strLit)), q);
+      };
+      return choice(
+        str($._unescaped_double_quote_string_fragment, '"'),
+        str($._unescaped_single_quote_string_fragment, "'"),
+        str($._unescaped_backtick_string_fragment, "`")
+      );
+    },
 
     string_interpolation: $ => seq('${', $.simplexpr, '}'),
 
