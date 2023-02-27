@@ -212,6 +212,8 @@
 
 ["[" "]"] @punctuation.bracket
 
+["(" ")"] @punctuation.bracket
+
 ; Comments
 
 (comment) @comment @spell
