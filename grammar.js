@@ -74,7 +74,7 @@ module.exports = grammar({
        */
       const str = (fragment, q) => {
         const frag = repeat1(choice(fragment, $._escape_sequence));
-        const strLit = alias(frag, $.string_lit_fragment);
+        const strLit = alias(frag, $.string_fragment);
         return seq(q, repeat(choice($.string_interpolation, strLit)), q);
       };
       return choice(

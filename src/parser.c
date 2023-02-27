@@ -94,7 +94,7 @@ enum {
   aux_sym_json_array_repeat1 = 75,
   aux_sym_json_object_repeat1 = 76,
   alias_sym_index = 77,
-  alias_sym_string_lit_fragment = 78,
+  alias_sym_string_fragment = 78,
 };
 
 static const char * const ts_symbol_names[] = {
@@ -176,7 +176,7 @@ static const char * const ts_symbol_names[] = {
   [aux_sym_json_array_repeat1] = "json_array_repeat1",
   [aux_sym_json_object_repeat1] = "json_object_repeat1",
   [alias_sym_index] = "index",
-  [alias_sym_string_lit_fragment] = "string_lit_fragment",
+  [alias_sym_string_fragment] = "string_fragment",
 };
 
 static const TSSymbol ts_symbol_map[] = {
@@ -258,7 +258,7 @@ static const TSSymbol ts_symbol_map[] = {
   [aux_sym_json_array_repeat1] = aux_sym_json_array_repeat1,
   [aux_sym_json_object_repeat1] = aux_sym_json_object_repeat1,
   [alias_sym_index] = alias_sym_index,
-  [alias_sym_string_lit_fragment] = alias_sym_string_lit_fragment,
+  [alias_sym_string_fragment] = alias_sym_string_fragment,
 };
 
 static const TSSymbolMetadata ts_symbol_metadata[] = {
@@ -576,7 +576,7 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .visible = true,
     .named = true,
   },
-  [alias_sym_string_lit_fragment] = {
+  [alias_sym_string_fragment] = {
     .visible = true,
     .named = true,
   },
@@ -631,7 +631,7 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
 static const TSSymbol ts_alias_sequences[PRODUCTION_ID_COUNT][MAX_ALIAS_SEQUENCE_LENGTH] = {
   [0] = {0},
   [1] = {
-    [0] = alias_sym_string_lit_fragment,
+    [0] = alias_sym_string_fragment,
   },
   [4] = {
     [2] = alias_sym_index,
@@ -641,13 +641,13 @@ static const TSSymbol ts_alias_sequences[PRODUCTION_ID_COUNT][MAX_ALIAS_SEQUENCE
 static const uint16_t ts_non_terminal_alias_map[] = {
   aux_sym_string_repeat1, 2,
     aux_sym_string_repeat1,
-    alias_sym_string_lit_fragment,
+    alias_sym_string_fragment,
   aux_sym_string_repeat3, 2,
     aux_sym_string_repeat3,
-    alias_sym_string_lit_fragment,
+    alias_sym_string_fragment,
   aux_sym_string_repeat5, 2,
     aux_sym_string_repeat5,
-    alias_sym_string_lit_fragment,
+    alias_sym_string_fragment,
   0,
 };
 

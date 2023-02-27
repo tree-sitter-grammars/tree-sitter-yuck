@@ -175,7 +175,7 @@
                       }
                     },
                     "named": true,
-                    "value": "string_lit_fragment"
+                    "value": "string_fragment"
                   }
                 ]
               }
@@ -221,7 +221,7 @@
                       }
                     },
                     "named": true,
-                    "value": "string_lit_fragment"
+                    "value": "string_fragment"
                   }
                 ]
               }
@@ -267,7 +267,7 @@
                       }
                     },
                     "named": true,
-                    "value": "string_lit_fragment"
+                    "value": "string_fragment"
                   }
                 ]
               }

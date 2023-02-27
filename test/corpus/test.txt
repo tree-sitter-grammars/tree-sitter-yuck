@@ -19,7 +19,7 @@ Test a widget
 	  (symbol)
 	  (keyword)
 	  (string
-		(string_lit_fragment))
+		(string_fragment))
 	  (list
 		(symbol))
 	  (list
@@ -51,15 +51,15 @@ Test string interpolation
 	  (symbol)
 	  (keyword)
 	  (string
-		(string_lit_fragment))
+		(string_fragment))
 	  (keyword)
 	  (string
-		(string_lit_fragment))
+		(string_fragment))
 	  (keyword)
 	  (boolean)
 	  (keyword)
 	  (string
-		(string_lit_fragment))
+		(string_fragment))
 	  (expr
 		(simplexpr
 		  (ternary_expression
@@ -71,7 +71,7 @@ Test string interpolation
 				  (string))))
 			(simplexpr
 			  (string
-				(string_lit_fragment)
+				(string_fragment)
 				(string_interpolation
 				  (simplexpr
 					(ident)))))
@@ -92,4 +92,4 @@ Test includes
   (list
     (symbol)
     (string
-      (string_lit_fragment))))
+      (string_fragment))))
