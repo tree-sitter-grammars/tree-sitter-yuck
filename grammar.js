@@ -65,6 +65,13 @@ module.exports = grammar({
     // Here we tolerate unescaped newlines in double-quoted and
     // single-quoted string literals.
     string: $ => {
+      /**
+       * @param {SymbolRule<string>} fragment - The fragment to repeat
+       *
+       * @param {string} q - The quote character
+       *
+       * @return {SeqRule}
+       */
       const str = (fragment, q) => {
         const frag = repeat1(choice(fragment, $._escape_sequence));
         const strLit = alias(frag, $.string_lit_fragment);
