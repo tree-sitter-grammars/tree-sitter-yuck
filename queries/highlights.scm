@@ -5,15 +5,6 @@
 ((symbol) @include
   (#match? @include "include"))
 
-; Types
-
-(ast_block
-  (symbol)
-  (ident) @type)
-
-(list
-  (symbol) @tag)
-
 ; Keywords
 
 ((symbol) @keyword
@@ -43,6 +34,9 @@
 
 (array
   (symbol) @variable)
+
+(list
+  (symbol) @tag)
 
 (json_access
 	(simplexpr
