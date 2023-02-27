@@ -197,7 +197,7 @@
 
 ; String
 
-[ (string_lit_fragment) "\"" "'" "`" ] @string
+[ (string_fragment) "\"" "'" "`" ] @string
 
 (string_interpolation
   "${" @punctuation.special
