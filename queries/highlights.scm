@@ -1,4 +1,7 @@
-(ERROR) @error
+; Tags
+
+(list
+  (symbol) @tag)
 
 ; Includes
 
@@ -34,9 +37,6 @@
 
 (array
   (symbol) @variable)
-
-(list
-  (symbol) @tag)
 
 (json_access
 	(simplexpr
@@ -167,15 +167,7 @@
 (ternary_expression
   ["?" ":"] @conditional.ternary)
 
-; Literals
-
-(number) @number
-
-(float) @float
-
-(boolean) @boolean
-
-; Misc
+; Punctuation
 
 [
   ":"
@@ -185,11 +177,15 @@
 
 ["{" "}" "[" "]" "(" ")"] @punctuation.bracket
 
-; Comments
+; Literals
 
-(comment) @comment @spell
+(number) @number
 
-; String
+(float) @float
+
+(boolean) @boolean
+
+; Strings
 
 [ (string_fragment) "\"" "'" "`" ] @string
 
@@ -199,7 +195,15 @@
 
 (escape_sequence) @string.escape
 
+; Comments
+
+(comment) @comment @spell
+
 ; Other stuff that has not been catched by the previous queries yet
 
 (ident) @variable
 (index) @property
+
+; Errors
+
+(ERROR) @error
