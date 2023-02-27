@@ -11,7 +11,7 @@
 ; Keywords
 
 ((symbol) @keyword
-  (#match? @keyword "^def"))
+  (#any-of? @keyword "defwindow" "defwidget" "defvar" "defpoll" "deflisten" "for" "geometry" "children" "struts"))
 
 ; Functions
 
