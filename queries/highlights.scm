@@ -1,3 +1,10 @@
+(ERROR) @error
+
+; Includes
+
+((symbol) @include
+  (#match? @include "include"))
+
 ; Types
 
 (ast_block
@@ -5,12 +12,7 @@
   (ident) @type)
 
 (list
-  (symbol) @type)
-
-; Includes
-
-((symbol) @include
-  (#match? @include "include"))
+  (symbol) @tag)
 
 ; Keywords
 
@@ -173,9 +175,6 @@
 
 ; Literals
 
-(string) @string
-(escape_sequence) @string.escape
-
 (number) @number
 
 (float) @float
@@ -190,20 +189,23 @@
   ","
 ] @punctuation.delimiter
 
-["{" "}"] @punctuation.bracket
-
-["[" "]"] @punctuation.bracket
-
-["(" ")"] @punctuation.bracket
+["{" "}" "[" "]" "(" ")"] @punctuation.bracket
 
 ; Comments
 
 (comment) @comment @spell
 
-; Interpolations
+; String
+
+[ (string_lit_fragment) "\"" "'" "`" ] @string
 
 (string_interpolation
-	"${" @punctuation.special
-  (simplexpr
-	  (ident) @variable)
-	"}" @punctuation.special) @embedded @none
+  "${" @punctuation.special
+  "}" @punctuation.special) @embedded
+
+(escape_sequence) @string.escape
+
+; Other stuff that has not been catched by the previous queries yet
+
+(ident) @variable
+(index) @property
