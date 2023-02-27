@@ -1,12 +1,18 @@
 [package]
 name = "tree-sitter-yuck"
-description = "yuck grammar for tree-sitter"
+description = "Yuck grammar for tree-sitter"
 version = "0.0.1"
-keywords = ["incremental", "parsing", "yuck"]
+authors = [
+	"Philipp Mildenberger <philipp@mildenberger.me>",
+	"Amaan Qureshi <amaanq12@gmail.com>",
+]
+license = "MIT"
+readme = "bindings/rust/README.md"
+keywords = ["incremental", "parsing", "yuck", "eww"]
 categories = ["parsing", "text-editors"]
 repository = "https://github.com/Philipp-M/tree-sitter-yuck"
 edition = "2021"
-license = "MIT"
+autoexamples = false
 
 build = "bindings/rust/build.rs"
 include = ["bindings/rust/*", "grammar.js", "queries/*", "src/*"]
@@ -15,7 +21,7 @@ include = ["bindings/rust/*", "grammar.js", "queries/*", "src/*"]
 path = "bindings/rust/lib.rs"
 
 [dependencies]
-tree-sitter = "~0.20.3"
+tree-sitter = "0.20.9"
 
 [build-dependencies]
 cc = "1.0"
