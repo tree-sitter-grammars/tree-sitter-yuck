@@ -3,6 +3,15 @@
 ((symbol) @include
   (#match? @include "include"))
 
+; Types
+
+(ast_block
+  (symbol)
+  (ident) @type)
+
+(list
+  (symbol) @type)
+
 ; Keywords
 
 ((symbol) @keyword
@@ -12,15 +21,6 @@
 
 (function_call
   name: (ident) @function.call)
-
-; Types
-
-(ast_block
-  (symbol)
-  (ident) @type)
-
-(list
-  (symbol) @type)
 
 ; Variables
 
