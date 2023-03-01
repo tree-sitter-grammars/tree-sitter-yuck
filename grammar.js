@@ -37,8 +37,6 @@ module.exports = grammar({
     $._unescaped_backtick_string_fragment,
   ],
 
-  conflicts: $ => [[$.string]],
-
   extras: $ => [$.comment, /\s/],
 
   supertypes: $ => [$.ast_block, $.literal],
@@ -73,9 +71,11 @@ module.exports = grammar({
        * @return {SeqRule}
        */
       const str = (fragment, q) => {
-        const frag = repeat1(choice(fragment, $._escape_sequence));
-        const strLit = alias(frag, $.string_fragment);
-        return seq(q, repeat(choice($.string_interpolation, strLit)), q);
+        const frag = alias(
+          prec.right(0, repeat1(choice(fragment, $._escape_sequence))),
+          $.string_fragment
+        );
+        return seq(q, repeat(choice($.string_interpolation, frag)), q);
       };
       return choice(
         str($._unescaped_double_quote_string_fragment, '"'),

@@ -159,19 +159,23 @@
                   {
                     "type": "ALIAS",
                     "content": {
-                      "type": "REPEAT1",
+                      "type": "PREC_RIGHT",
+                      "value": 0,
                       "content": {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "SYMBOL",
-                            "name": "_unescaped_double_quote_string_fragment"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "_escape_sequence"
-                          }
-                        ]
+                        "type": "REPEAT1",
+                        "content": {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "SYMBOL",
+                              "name": "_unescaped_double_quote_string_fragment"
+                            },
+                            {
+                              "type": "SYMBOL",
+                              "name": "_escape_sequence"
+                            }
+                          ]
+                        }
                       }
                     },
                     "named": true,
@@ -205,19 +209,23 @@
                   {
                     "type": "ALIAS",
                     "content": {
-                      "type": "REPEAT1",
+                      "type": "PREC_RIGHT",
+                      "value": 0,
                       "content": {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "SYMBOL",
-                            "name": "_unescaped_single_quote_string_fragment"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "_escape_sequence"
-                          }
-                        ]
+                        "type": "REPEAT1",
+                        "content": {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "SYMBOL",
+                              "name": "_unescaped_single_quote_string_fragment"
+                            },
+                            {
+                              "type": "SYMBOL",
+                              "name": "_escape_sequence"
+                            }
+                          ]
+                        }
                       }
                     },
                     "named": true,
@@ -251,19 +259,23 @@
                   {
                     "type": "ALIAS",
                     "content": {
-                      "type": "REPEAT1",
+                      "type": "PREC_RIGHT",
+                      "value": 0,
                       "content": {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "SYMBOL",
-                            "name": "_unescaped_backtick_string_fragment"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "_escape_sequence"
-                          }
-                        ]
+                        "type": "REPEAT1",
+                        "content": {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "SYMBOL",
+                              "name": "_unescaped_backtick_string_fragment"
+                            },
+                            {
+                              "type": "SYMBOL",
+                              "name": "_escape_sequence"
+                            }
+                          ]
+                        }
                       }
                     },
                     "named": true,
@@ -1358,11 +1370,7 @@
       "value": "\\s"
     }
   ],
-  "conflicts": [
-    [
-      "string"
-    ]
-  ],
+  "conflicts": [],
   "precedences": [],
   "externals": [
     {
