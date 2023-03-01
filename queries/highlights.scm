@@ -10,8 +10,13 @@
 
 ; Keywords
 
-((symbol) @keyword
-  (#any-of? @keyword "defwindow" "defwidget" "defvar" "defpoll" "deflisten" "for" "geometry" "children" "struts"))
+; I think there's a bug in tree-sitter the anchor doesn't seem to be working, see
+; https://github.com/tree-sitter/tree-sitter/pull/2107
+(list .
+  ((symbol) @string
+	  (#match? @string "^(defwindow|defwidget|defvar|defpoll|deflisten|geometry|children|struts)$")))
+
+(loop_widget . "for" @keyword . (symbol) @variable . "in" @string . [((symbol) @variable) (_)] . (list) @string)
 
 ; Functions
 
