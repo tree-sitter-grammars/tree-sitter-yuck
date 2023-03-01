@@ -47,7 +47,27 @@ module.exports = grammar({
     source_file: $ => repeat($.ast_block),
 
     ast_block: $ =>
-      choice($.list, $.array, $.keyword, $.symbol, $.literal, $.string, $.expr),
+      choice(
+        $.loop_widget,
+        $.list,
+        $.array,
+        $.keyword,
+        $.symbol,
+        $.literal,
+        $.string,
+        $.expr
+      ),
+
+    loop_widget: $ =>
+      seq(
+        '(',
+        'for',
+        $.symbol,
+        'in',
+        choice($.symbol, $.expr),
+        $.ast_block,
+        ')'
+      ),
 
     list: $ => seq('(', repeat($.ast_block), ')'),
     array: $ => seq('[', repeat($.ast_block), ']'),

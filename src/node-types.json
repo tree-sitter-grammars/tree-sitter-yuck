@@ -24,6 +24,10 @@
         "named": true
       },
       {
+        "type": "loop_widget",
+        "named": true
+      },
+      {
         "type": "string",
         "named": true
       },
@@ -305,6 +309,21 @@
     "children": {
       "multiple": true,
       "required": false,
+      "types": [
+        {
+          "type": "ast_block",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "loop_widget",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
       "types": [
         {
           "type": "ast_block",
@@ -677,8 +696,16 @@
     "named": true
   },
   {
+    "type": "for",
+    "named": false
+  },
+  {
     "type": "ident",
     "named": true
+  },
+  {
+    "type": "in",
+    "named": false
   },
   {
     "type": "index",
