@@ -15,30 +15,9 @@
 
 ; Builtin widgets
 
-((symbol) @type
-  (#any-of? @type
-    "box"
-    "button"
-    "calendar"
-    "centerbox"
-    "checkbox"
-    "circular-progress"
-    "color-button"
-    "color-chooser"
-    "combo-box-text"
-    "eventbox"
-    "expander"
-    "graph"
-    "image"
-    "input"
-    "label"
-    "literal"
-    "overlay"
-    "progress"
-    "revealer"
-    "scale"
-    "scroll"
-    "transform"))
+(list .
+  ((symbol) @tag.builtin
+    (#match? @tag.builtin "^(box|button|calendar|centerbox|checkbox|circular-progress|color-button|color-chooser|combo-box-text|eventbox|expander|graph|image|input|label|literal|overlay|progress|revealer|scale|scroll|transform)$")))
 
 ; Functions
 
