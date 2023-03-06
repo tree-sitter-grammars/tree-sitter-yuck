@@ -6,7 +6,7 @@
 ; Includes
 
 ((symbol) @include
-  (#match? @include "include"))
+  (#match? @include "^include$"))
 
 ; Keywords
 
@@ -24,12 +24,9 @@
   ((symbol) @tag.builtin
     (#match? @tag.builtin "^(box|button|calendar|centerbox|checkbox|circular-progress|color-button|color-chooser|combo-box-text|eventbox|expander|graph|image|input|label|literal|overlay|progress|revealer|scale|scroll|transform)$")))
 
-; Functions
-
-(function_call
-  name: (ident) @function.call)
-
 ; Variables
+
+(ident) @variable
 
 (array
   (symbol) @variable)
@@ -102,57 +99,10 @@
 	(simplexpr
 		(ident) @field))
 
-; Operators
+; Functions
 
-[
-  "+"
-  "-"
-  "*"
-  "/"
-  "%"
-	"&&"
-  "||"
-  "=="
-  "!="
-  "=~"
-	">="
-	"<="
-  ">"
-  "<"
-	"?:"
-	"?."
-  "!"
-] @operator
-
-(ternary_expression
-  ["?" ":"] @conditional.ternary)
-
-; Properties & Fields
-
-(keyword) @property
-
-(json_access
-  (_)
-  "["
-	(simplexpr
-		(ident) @property))
-
-(json_safe_access
-  (_)
-  "?."
-  "["
-	(simplexpr
-		(ident) @property))
-
-(json_dot_access
-  (index) @property)
-
-(json_safe_dot_access
-  (index) @property)
-
-(json_object
-	(simplexpr
-		(ident) @field))
+(function_call
+  name: (ident) @function.call)
 
 ; Operators
 
@@ -173,6 +123,7 @@
   "<="
   "!"
   "?."
+  "?:"
 ] @operator
 
 (ternary_expression
