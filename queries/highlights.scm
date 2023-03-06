@@ -210,11 +210,6 @@
 
 (comment) @comment @spell
 
-; Other stuff that has not been catched by the previous queries yet
-
-(ident) @variable
-(index) @property
-
 ; Errors
 
 (ERROR) @error
