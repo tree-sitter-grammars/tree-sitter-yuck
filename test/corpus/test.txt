@@ -12,20 +12,20 @@ Test a widget
 
 (source_file
   (list
-	(symbol)
-	(symbol)
-	(array)
-	(list
-	  (symbol)
-	  (keyword)
-	  (string
-		(string_fragment))
-	  (list
-		(symbol))
-	  (list
-		(symbol))
-	  (list
-		(symbol)))))
+    (symbol)
+    (symbol)
+    (array)
+    (list
+      (symbol)
+      (keyword)
+      (string
+        (string_fragment))
+      (list
+        (symbol))
+      (list
+        (symbol))
+      (list
+        (symbol)))))
 
 
 
@@ -44,39 +44,39 @@ Test string interpolation
 
 (source_file
   (list
-	(symbol)
-	(symbol)
-	(array)
-	(list
-	  (symbol)
-	  (keyword)
-	  (string
-		(string_fragment))
-	  (keyword)
-	  (string
-		(string_fragment))
-	  (keyword)
-	  (boolean)
-	  (keyword)
-	  (string
-		(string_fragment))
-	  (expr
-		(simplexpr
-		  (ternary_expression
-			(simplexpr
-			  (binary_expression
-				(simplexpr
-				  (ident))
-				(simplexpr
-				  (string))))
-			(simplexpr
-			  (string
-				(string_fragment)
-				(string_interpolation
-				  (simplexpr
-					(ident)))))
-			(simplexpr
-			  (string))))))))
+    (symbol)
+    (symbol)
+    (array)
+    (list
+      (symbol)
+      (keyword)
+      (string
+        (string_fragment))
+      (keyword)
+      (string
+        (string_fragment))
+      (keyword)
+      (boolean)
+      (keyword)
+      (string
+        (string_fragment))
+      (expr
+        (simplexpr
+          (ternary_expression
+            (simplexpr
+              (binary_expression
+                (simplexpr
+                  (ident))
+                (simplexpr
+                  (string))))
+            (simplexpr
+              (string
+                (string_fragment)
+                (string_interpolation
+                  (simplexpr
+                    (ident)))))
+            (simplexpr
+              (string))))))))
 
 
 

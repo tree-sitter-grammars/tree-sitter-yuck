@@ -13,7 +13,7 @@
 (keyword) @definition.field
 
 (json_object
-	(simplexpr
+  (simplexpr
     (ident) @definition.field))
 
 (ast_block

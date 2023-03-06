@@ -3,8 +3,8 @@ name = "tree-sitter-yuck"
 description = "Yuck grammar for tree-sitter"
 version = "0.0.1"
 authors = [
-	"Philipp Mildenberger <philipp@mildenberger.me>",
-	"Amaan Qureshi <amaanq12@gmail.com>",
+  "Philipp Mildenberger <philipp@mildenberger.me>",
+  "Amaan Qureshi <amaanq12@gmail.com>",
 ]
 license = "MIT"
 readme = "bindings/rust/README.md"

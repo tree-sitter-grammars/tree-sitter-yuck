@@ -33,45 +33,45 @@
   (symbol) @variable)
 
 (binary_expression
-	(simplexpr
+  (simplexpr
     (ident) @variable))
 
 (unary_expression
-	(simplexpr
+  (simplexpr
     (ident) @variable))
 
 (ternary_expression
-	(simplexpr
-		(ident) @variable))
+  (simplexpr
+    (ident) @variable))
 
 (array
   (symbol) @variable)
 
 (json_access
-	(simplexpr
-		(ident) @variable))
+  (simplexpr
+    (ident) @variable))
 
 (json_safe_access
-	(simplexpr
-		(ident) @variable))
+  (simplexpr
+    (ident) @variable))
 
 (json_array
-	(simplexpr
+  (simplexpr
     (ident) @variable))
 
 (json_dot_access
-	(simplexpr
-		(ident) @variable))
+  (simplexpr
+    (ident) @variable))
 
 (json_safe_dot_access
-	(simplexpr
-		(ident) @variable))
+  (simplexpr
+    (ident) @variable))
 
 (json_object
   (_)
   ":"
-	(simplexpr
-		(ident) @variable))
+  (simplexpr
+    (ident) @variable))
 
 ; Properties & Fields
 
@@ -80,15 +80,15 @@
 (json_access
   (_)
   "["
-	(simplexpr
-		(ident) @property))
+  (simplexpr
+    (ident) @property))
 
 (json_safe_access
   (_)
   "?."
   "["
-	(simplexpr
-		(ident) @property))
+  (simplexpr
+    (ident) @property))
 
 (json_dot_access
   (index) @property)
@@ -97,8 +97,8 @@
   (index) @property)
 
 (json_object
-	(simplexpr
-		(ident) @field))
+  (simplexpr
+    (ident) @field))
 
 ; Functions
 

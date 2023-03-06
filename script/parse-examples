@@ -5,24 +5,24 @@ set -eu
 cd "$(dirname "$0")/.."
 
 function clone_repo {
-	owner=$1
-	name=$2
-	sha=$3
+  owner=$1
+  name=$2
+  sha=$3
 
-	path=examples/$name
-	if [ ! -d "$path" ]; then
-		echo "Cloning $owner/$name"
-		git clone "https://github.com/$owner/$name" "$path"
-	fi
+  path=examples/$name
+  if [ ! -d "$path" ]; then
+    echo "Cloning $owner/$name"
+    git clone "https://github.com/$owner/$name" "$path"
+  fi
 
-	pushd "$path" >/dev/null
-	actual_sha=$(git rev-parse HEAD)
-	if [ "$actual_sha" != "$sha" ]; then
-		echo "Updating $owner/$name to $sha"
-		git fetch
-		git reset --hard "$sha"
-	fi
-	popd >/dev/null
+  pushd "$path" >/dev/null
+  actual_sha=$(git rev-parse HEAD)
+  if [ "$actual_sha" != "$sha" ]; then
+    echo "Updating $owner/$name to $sha"
+    git fetch
+    git reset --hard "$sha"
+  fi
+  popd >/dev/null
 }
 
 clone_repo elkowar eww 6a64a286291456984011c4fb160def106ee55dff
@@ -31,8 +31,8 @@ known_failures="$(cat script/known_failures.txt)"
 
 # shellcheck disable=2046
 tree-sitter parse -q \
-	"examples/**/*.yuck" \
-	$(for failure in $known_failures; do echo "!${failure}"; done)
+  "examples/**/*.yuck" \
+  $(for failure in $known_failures; do echo "!${failure}"; done)
 
 example_count=$(find examples -name "*.yuck" | wc -l)
 failure_count=$(wc -w <<<"$known_failures")
@@ -40,5 +40,5 @@ success_count=$((example_count - failure_count))
 success_percent=$(bc -l <<<"100*${success_count}/${example_count}")
 
 printf \
-	"Successfully parsed %d of %d example files (%.1f%%)\n" \
-	"$success_count" "$example_count" "$success_percent"
+  "Successfully parsed %d of %d example files (%.1f%%)\n" \
+  "$success_count" "$example_count" "$success_percent"
