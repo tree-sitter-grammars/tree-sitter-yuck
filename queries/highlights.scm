@@ -32,47 +32,6 @@
 (array
   (symbol) @variable)
 
-(binary_expression
-  (simplexpr
-    (ident) @variable))
-
-(unary_expression
-  (simplexpr
-    (ident) @variable))
-
-(ternary_expression
-  (simplexpr
-    (ident) @variable))
-
-(array
-  (symbol) @variable)
-
-(json_access
-  (simplexpr
-    (ident) @variable))
-
-(json_safe_access
-  (simplexpr
-    (ident) @variable))
-
-(json_array
-  (simplexpr
-    (ident) @variable))
-
-(json_dot_access
-  (simplexpr
-    (ident) @variable))
-
-(json_safe_dot_access
-  (simplexpr
-    (ident) @variable))
-
-(json_object
-  (_)
-  ":"
-  (simplexpr
-    (ident) @variable))
-
 ; Properties & Fields
 
 (keyword) @property
