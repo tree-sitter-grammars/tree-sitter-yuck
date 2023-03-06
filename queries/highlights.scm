@@ -5,8 +5,9 @@
 
 ; Includes
 
-((symbol) @include
-  (#match? @include "^include$"))
+(list .
+  ((symbol) @include
+    (#eq? @include "include")))
 
 ; Keywords
 
@@ -14,7 +15,7 @@
 ; https://github.com/tree-sitter/tree-sitter/pull/2107
 (list .
   ((symbol) @keyword
-	  (#match? @keyword "^(defwindow|defwidget|defvar|defpoll|deflisten|geometry|children|struts)$")))
+    (#match? @keyword "^(defwindow|defwidget|defvar|defpoll|deflisten|geometry|children|struts)$")))
 
 (loop_widget . "for" @keyword . (symbol) @variable . "in" @string . [((symbol) @variable) (_)] . (list) @string)
 
