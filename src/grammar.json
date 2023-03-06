@@ -75,6 +75,10 @@
             {
               "type": "SYMBOL",
               "name": "expr"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "string"
             }
           ]
         },

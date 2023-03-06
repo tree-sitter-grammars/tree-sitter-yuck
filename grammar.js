@@ -64,7 +64,7 @@ module.exports = grammar({
         'for',
         $.symbol,
         'in',
-        choice($.symbol, $.expr),
+        choice($.symbol, $.expr, $.string),
         $.ast_block,
         ')'
       ),
