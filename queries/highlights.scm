@@ -86,18 +86,15 @@
   "?:"
 ] @operator
 
-(ternary_expression
-  ["?" ":"] @conditional.ternary)
-
 ; Punctuation
 
-[
-  ":"
-  "."
-  ","
-] @punctuation.delimiter
-
+[":" "." ","] @punctuation.delimiter
 ["{" "}" "[" "]" "(" ")"] @punctuation.bracket
+
+; Ternary expression
+
+(ternary_expression
+  ["?" ":"] @conditional.ternary)
 
 ; Literals
 
