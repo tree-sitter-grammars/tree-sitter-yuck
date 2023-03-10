@@ -43,11 +43,11 @@
 
 (number (integer)) @constant.numeric.integer
 
-(boolean) @boolean
+(boolean) @constant.builtin.boolean
 
 ; Strings
 
-(escape_sequence) @string.escape
+(escape_sequence) @constant.character.escape
 
 (string_interpolation
   "${" @punctuation.special

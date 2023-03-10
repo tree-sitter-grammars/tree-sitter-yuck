@@ -127,9 +127,7 @@
 
 (number) @number
 
-(number (float)) @float
-
-(number (integer)) @integer
+(float) @float
 
 (boolean) @boolean
 
