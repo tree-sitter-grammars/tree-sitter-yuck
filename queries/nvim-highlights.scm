@@ -1,5 +1,6 @@
 ; Tags
 
+; TODO apply to every symbol in list? I think it should probably only be applied to the first child of the list
 (list
   (symbol) @tag)
 
@@ -15,15 +16,41 @@
 ; https://github.com/tree-sitter/tree-sitter/pull/2107
 (list .
   ((symbol) @keyword
-    (#match? @keyword "^(defwindow|defwidget|defvar|defpoll|deflisten|geometry|children|struts)$")))
+    (#any-of? @keyword "defwindow" "defwidget" "defvar" "defpoll" "deflisten" "geometry" "children" "struts")))
 
-(loop_widget . "for" @keyword . (symbol) @variable . "in" @string . [((symbol) @variable) (_)] . (list) @string)
+; Loop
+
+(loop_widget . "for" @repeat . (symbol) @variable . "in" @keyword.operator)
+
+(loop_widget . "for" @repeat . (symbol) @variable . "in" @keyword.operator . (symbol) @variable)
 
 ; Builtin widgets
 
 (list .
   ((symbol) @tag.builtin
-    (#match? @tag.builtin "^(box|button|calendar|centerbox|checkbox|circular-progress|color-button|color-chooser|combo-box-text|eventbox|expander|graph|image|input|label|literal|overlay|progress|revealer|scale|scroll|transform)$")))
+    (#any-of? @tag.builtin
+      "box"
+      "button"
+      "calendar"
+      "centerbox"
+      "checkbox"
+      "circular-progress"
+      "color-button"
+      "color-chooser"
+      "combo-box-text"
+      "eventbox"
+      "expander"
+      "graph"
+      "image"
+      "input"
+      "label"
+      "literal"
+      "overlay"
+      "progress"
+      "revealer"
+      "scale"
+      "scroll"
+      "transform")))
 
 ; Variables
 
@@ -100,7 +127,9 @@
 
 (number) @number
 
-(float) @float
+(number (float)) @float
+
+(number (integer)) @integer
 
 (boolean) @boolean
 
