@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-yuck",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Yuck grammar for tree-sitter",
   "main": "bindings/node",
   "keywords": [
