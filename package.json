@@ -29,6 +29,7 @@
     "prettier": "^2.8.4",
     "tree-sitter-cli": "^0.20.7"
   },
+  "type": "module",
   "repository": "https://github.com/Philipp-M/tree-sitter-yuck",
   "scripts": {
     "build": "tree-sitter generate && node-gyp build",

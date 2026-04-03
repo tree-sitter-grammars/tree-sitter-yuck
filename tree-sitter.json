@@ -1,0 +1,41 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "yuck",
+      "camelcase": "Yuck",
+      "title": "Yuck",
+      "scope": "source.yuck",
+      "file-types": [
+        "yuck"
+      ],
+      "injection-regex": "^yuck$",
+      "class-name": "TreeSitterYuck"
+    }
+  ],
+  "metadata": {
+    "version": "0.0.2",
+    "license": "MIT",
+    "description": "Yuck grammar for tree-sitter",
+    "authors": [
+      {
+        "name": "Philipp Mildenberger <philipp@mildenberger.me>",
+        "url": ""
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/tree-sitter-grammars/tree-sitter-yuck",
+      "funding": ""
+    }
+  },
+  "bindings": {
+    "c": false,
+    "go": false,
+    "java": false,
+    "node": false,
+    "python": false,
+    "rust": false,
+    "swift": false,
+    "zig": false
+  }
+}
