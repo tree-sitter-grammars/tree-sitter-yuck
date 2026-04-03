@@ -28,7 +28,7 @@ const PREC = {
   json: 12,
 };
 
-module.exports = grammar({
+export default grammar({
   name: 'yuck',
 
   externals: $ => [

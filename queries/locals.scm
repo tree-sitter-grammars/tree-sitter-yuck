@@ -1,21 +1,16 @@
 [
   (ast_block)
-  (list)
-  (array)
-  (expr)
   (json_array)
   (json_object)
   (parenthesized_expression)
-] @scope
+] @local.scope
 
-(symbol) @reference
+(symbol) @local.reference
 
-(keyword) @definition.field
+(keyword) @local.definition.field
 
 (json_object
   (simplexpr
-    (ident) @definition.field))
+    (ident) @local.definition.field))
 
-(ast_block
-  (symbol)
-  (ident) @definition.type)
+(symbol) @local.definition.type

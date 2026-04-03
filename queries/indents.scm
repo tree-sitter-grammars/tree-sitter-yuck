@@ -1,25 +1,28 @@
 [
   (ast_block)
-  (array)
-  (expr)
   (json_array)
   (json_object)
   (parenthesized_expression)
-] @indent
+] @indent.begin
 
 ; TODO: can't get this to work, goal is to indent at the property ":" prefix
-; ((list (identifier) (property)) @aligned_indent
-;   (#set! "delimiter" ":"))
-
-[")" "}" "]"] @indent_end
-
-[ "{" "}" ] @branch
-
-[ "(" ")" ] @branch
-
-[ "[" "]" ] @branch
-
+; ((list (identifier) (property)) @indent.align
+;   (#set! indent.open_delimiter "(")
+;   (#set! indent.close_delimiter ")"))
 [
- (ERROR)
- (comment)
-] @auto
+  ")"
+  "}"
+  "]"
+] @indent.end @indent.branch
+
+; I do not know what/when this should be added.
+; Commenting this out for now
+; [
+;   "("
+;   "{"
+;   "["
+; ] @indent.branch
+[
+  (ERROR)
+  (comment)
+] @indent.auto
