@@ -1,0 +1,210 @@
+// Yuck grammar for tree-sitter (native DSL).
+// Translated from grammar.js.
+
+let PREC = {
+    ternary: 0,
+    or: 1,
+    and: 2,
+    elvis: 2,
+    equality: 6,
+    relation: 7,
+    add: 8,
+    times: 9,
+    unary: 10,
+    json_access: 11,
+    json: 12,
+}
+
+macro binop_l(p: int_t, op: rule_t) rule_t {
+    prec_left(p, seq(
+        field(left, simplexpr),
+        field(operator, op),
+        field(right, simplexpr),
+    ))
+}
+
+macro comma_sep1(rule: rule_t) rule_t {
+    seq(rule, repeat(seq(",", rule)))
+}
+
+macro comma_sep(rule: rule_t) rule_t {
+    optional(comma_sep1(rule))
+}
+
+// JS `str(fragment, q)` closure: builds a quoted-string variant with the
+// given fragment and quote char.
+macro str(frag: rule_t, q: str_t) rule_t {
+    seq(
+        q,
+        repeat(choice(
+            string_interpolation,
+            alias(prec_right(0, repeat1(choice(frag, _escape_sequence))), string_fragment),
+        )),
+        q,
+    )
+}
+
+grammar {
+    language: "yuck",
+    externals: [
+        _unescaped_single_quote_string_fragment,
+        _unescaped_double_quote_string_fragment,
+        _unescaped_backtick_string_fragment,
+    ],
+    extras: [comment, regexp(r"\s")],
+    supertypes: [ast_block, literal],
+    word: symbol,
+}
+
+rule source_file { repeat(ast_block) }
+
+rule ast_block {
+    choice(loop_widget, list, array, keyword, symbol, literal, string, expr)
+}
+
+rule loop_widget {
+    seq(
+        "(",
+        "for",
+        symbol,
+        "in",
+        choice(symbol, expr, string),
+        ast_block,
+        ")",
+    )
+}
+
+rule list { seq("(", repeat(ast_block), ")") }
+
+rule array { seq("[", repeat(ast_block), "]") }
+
+rule keyword { regexp(r":[^\s\)\]}]+") }
+
+rule symbol {
+    regexp(r"[a-zA-Z_!\?<>/\.\*-\+\-][^\s{}\(\)\[\](){}]*")
+}
+
+rule literal { choice(number, boolean) }
+
+rule number { choice(integer, float) }
+
+rule integer { regexp(r"\d+") }
+
+rule float { regexp(r"\d+\.\d+") }
+
+rule boolean { choice("true", "false") }
+
+rule string {
+    choice(
+        str(_unescaped_double_quote_string_fragment, "\""),
+        str(_unescaped_single_quote_string_fragment, "'"),
+        str(_unescaped_backtick_string_fragment, "`"),
+    )
+}
+
+rule string_interpolation { seq("${", simplexpr, "}") }
+
+rule _escape_sequence {
+    choice(
+        prec(2, token_immediate(seq("\\", regexp(r#"[^abfnrtvxu'\"\\\?]"#)))),
+        prec(1, escape_sequence),
+    )
+}
+
+rule escape_sequence {
+    token_immediate(seq("\\", choice(
+        regexp(r"[^xu0-7]"),
+        regexp(r"[0-7]{1,3}"),
+        regexp(r"x[0-9a-fA-F]{2}"),
+        regexp(r"u[0-9a-fA-F]{4}"),
+        regexp(r"u\{[0-9a-fA-F]+\}"),
+    )))
+}
+
+rule expr { seq("{", simplexpr, "}") }
+
+rule simplexpr {
+    choice(
+        literal, string, ident,
+        json_array, json_object,
+        json_access, json_safe_access, json_dot_access, json_safe_dot_access,
+        function_call,
+        unary_expression, binary_expression, ternary_expression,
+        parenthesized_expression,
+    )
+}
+
+rule json_array {
+    prec_left(PREC.json, seq("[", comma_sep(simplexpr), "]"))
+}
+
+rule json_object {
+    prec_left(PREC.json, seq(
+        "{",
+        comma_sep(seq(simplexpr, ":", simplexpr)),
+        "}",
+    ))
+}
+
+rule json_access {
+    prec_right(PREC.json_access, seq(simplexpr, "[", simplexpr, "]"))
+}
+
+rule json_safe_access {
+    prec_right(PREC.json_access, seq(simplexpr, "?.", "[", simplexpr, "]"))
+}
+
+rule json_dot_access {
+    prec_right(PREC.json_access, seq(simplexpr, ".", alias(ident, index)))
+}
+
+rule json_safe_dot_access {
+    prec_right(PREC.json_access, seq(simplexpr, "?.", alias(ident, index)))
+}
+
+rule function_call {
+    seq(field(name, ident), "(", comma_sep(simplexpr), ")")
+}
+
+rule binary_expression {
+    choice(
+        binop_l(PREC.add, "+"),
+        binop_l(PREC.add, "-"),
+        binop_l(PREC.times, "*"),
+        binop_l(PREC.times, "/"),
+        binop_l(PREC.times, "%"),
+        binop_l(PREC.and, "&&"),
+        binop_l(PREC.or, "||"),
+        binop_l(PREC.equality, "=="),
+        binop_l(PREC.equality, "!="),
+        binop_l(PREC.equality, "=~"),
+        binop_l(PREC.relation, ">="),
+        binop_l(PREC.relation, "<="),
+        binop_l(PREC.relation, ">"),
+        binop_l(PREC.relation, "<"),
+        binop_l(PREC.elvis, "?:"),
+    )
+}
+
+rule unary_expression {
+    prec(PREC.unary, seq(
+        field(operator, choice("+", "-", "!")),
+        field(argument, simplexpr),
+    ))
+}
+
+rule ternary_expression {
+    prec_right(PREC.ternary, seq(
+        field(condition, simplexpr),
+        "?",
+        field(consequence, simplexpr),
+        ":",
+        field(alternative, simplexpr),
+    ))
+}
+
+rule parenthesized_expression { seq("(", simplexpr, ")") }
+
+rule ident { regexp(r"[a-zA-Z_][a-zA-Z0-9_-]*") }
+
+rule comment { token(seq(";", regexp(r".*"))) }
